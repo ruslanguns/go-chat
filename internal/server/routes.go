@@ -22,7 +22,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]string)
-	resp["message"] = "Hello World"
+	resp["message"] = "Hello rus"
 
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
