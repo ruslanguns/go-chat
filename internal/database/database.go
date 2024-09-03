@@ -9,6 +9,7 @@ import (
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/ruslanguns/go-chat/internal/domain/model"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -22,6 +23,13 @@ type Service interface {
 	// Close terminates the database connection.
 	// It returns an error if the connection cannot be closed.
 	Close() error
+
+	// Migrate runs the database migrations.
+	// It returns an error if the migrations fail.
+	Migrate() error
+
+	// GetDB returns the database connection.
+	GetDB() *gorm.DB
 }
 
 type service struct {
@@ -48,6 +56,10 @@ func New() Service {
 		db: db,
 	}
 	return dbInstance
+}
+
+func (s *service) GetDB() *gorm.DB {
+	return s.db
 }
 
 func (s *service) Health() map[string]string {
@@ -110,4 +122,13 @@ func (s *service) Close() error {
 	}
 	log.Printf("Disconnected from database: %s", dburl)
 	return sqlDB.Close()
+}
+
+func (s *service) Migrate() error {
+	return s.db.AutoMigrate(
+		&model.User{},
+		&model.PrivateMessage{},
+		&model.Channel{},
+		&model.ChannelMessage{},
+	)
 }

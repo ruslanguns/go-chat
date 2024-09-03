@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+show_tree() {
+  local dir=$1
+  if command -v tree &>/dev/null; then
+    echo "=== Tree structure for $dir ==="
+    tree "$dir"
+    echo
+  else
+    echo "Tree command not found. Skipping directory structure display for $dir."
+    echo "You can install tree using your package manager (e.g., 'sudo apt-get install tree' on Ubuntu)."
+    echo
+  fi
+}
+
+print_file_contents() {
+  local dir=$1
+  find "$dir" -type f | while read -r file; do
+    echo "=== $file ==="
+    cat "$file"
+    echo
+  done
+}
+
+for dir in "$@"; do
+  if [ -d "$dir" ]; then
+    show_tree "$dir"
+    print_file_contents "$dir"
+  else
+    echo "Error: $dir is not a directory."
+  fi
+done
